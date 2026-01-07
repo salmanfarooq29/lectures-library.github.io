@@ -1748,6 +1748,11 @@ video {
   color: rgb(68 64 60 / var(--tw-text-opacity, 1));
 }
 
+.text-stone-800{
+  --tw-text-opacity: 1;
+  color: rgb(41 37 36 / var(--tw-text-opacity, 1));
+}
+
 .text-stone-900{
   --tw-text-opacity: 1;
   color: rgb(28 25 23 / var(--tw-text-opacity, 1));
@@ -3371,31 +3376,42 @@ pre {
   font-size: 0.9em;
 }
 
+/* Code blocks - Let Chroma handle colors */
+
 .prose pre{
+  overflow-x: auto;
   border-radius: 0.5rem;
-  --tw-bg-opacity: 1;
-  background-color: rgb(28 25 23 / var(--tw-bg-opacity, 1));
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.prose pre:is(.dark *){
-  --tw-bg-opacity: 1;
-  background-color: rgb(12 10 9 / var(--tw-bg-opacity, 1));
-}
-
-.prose pre {
   font-size: 0.9rem;
+  /* Background handled by .chroma in syntax.css */
 }
 
 .prose pre code{
   background-color: transparent;
   padding: 0px;
-  --tw-text-opacity: 1;
-  color: rgb(245 245 244 / var(--tw-text-opacity, 1));
-  color: #e2e8f0 !important;
   font-size: 0.9rem;
+  /* Colors handled by Chroma classes */
+}
+
+/* Hugo's highlight wrapper */
+
+.highlight{
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.highlight pre{
+  margin: 0px;
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.highlight .chroma{
+  border-radius: 0.5rem;
 }
 
 .prose blockquote{
@@ -3812,6 +3828,45 @@ pre {
   color: hsl(142 20% 90%);
 }
 
+/* ===== Related Posts ===== */
+
+.related-post-card{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(231 229 228 / var(--tw-border-opacity, 1));
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.related-post-card:is(.dark *){
+  --tw-border-opacity: 1;
+  border-color: rgb(41 37 36 / var(--tw-border-opacity, 1));
+  --tw-bg-opacity: 1;
+  background-color: rgb(28 25 23 / var(--tw-bg-opacity, 1));
+}
+
+.related-post-card:hover{
+  --tw-border-opacity: 1;
+  border-color: rgb(214 211 209 / var(--tw-border-opacity, 1));
+}
+
+.related-post-card:hover:is(.dark *){
+  --tw-border-opacity: 1;
+  border-color: rgb(68 64 60 / var(--tw-border-opacity, 1));
+}
+
+.related-post-card{
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+  text-decoration: none;
+}
+
 .dark\:prose-invert:is(.dark *){
   --tw-prose-body: var(--tw-prose-invert-body);
   --tw-prose-headings: var(--tw-prose-invert-headings);
@@ -3968,6 +4023,11 @@ pre {
 .dark\:text-stone-100:is(.dark *){
   --tw-text-opacity: 1;
   color: rgb(245 245 244 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-stone-200:is(.dark *){
+  --tw-text-opacity: 1;
+  color: rgb(231 229 228 / var(--tw-text-opacity, 1));
 }
 
 .dark\:text-stone-300:is(.dark *){

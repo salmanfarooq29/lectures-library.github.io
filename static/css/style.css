@@ -655,15 +655,30 @@ pre {
   font-size: 0.9em;
 }
 
+/* Code blocks - Let Chroma handle colors */
 .prose pre {
-  @apply bg-stone-900 dark:bg-stone-950 rounded-lg shadow-sm;
+  @apply rounded-lg shadow-sm overflow-x-auto;
   font-size: 0.9rem;
+  /* Background handled by .chroma in syntax.css */
 }
 
 .prose pre code {
-  @apply bg-transparent text-stone-100 p-0;
-  color: #e2e8f0 !important;
+  @apply bg-transparent p-0;
   font-size: 0.9rem;
+  /* Colors handled by Chroma classes */
+}
+
+/* Hugo's highlight wrapper */
+.highlight {
+  @apply rounded-lg overflow-hidden my-5;
+}
+
+.highlight pre {
+  @apply m-0 p-4 overflow-x-auto;
+}
+
+.highlight .chroma {
+  @apply rounded-lg;
 }
 
 .prose blockquote {
@@ -870,4 +885,13 @@ pre {
 .dark .search-highlight {
   background: hsl(142 30% 30%);
   color: hsl(142 20% 90%);
+}
+
+/* ===== Related Posts ===== */
+.related-post-card {
+  @apply flex items-center gap-4 p-4 rounded-lg;
+  @apply bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800;
+  @apply hover:border-stone-300 dark:hover:border-stone-700;
+  @apply transition-all duration-200;
+  text-decoration: none;
 }
