@@ -97,11 +97,15 @@ github = "mohamedelhefni"
 # bing = "your-bing-verification-code"
 
 # Analytics (optional)
-# [params.analytics]
+[params.analytics]
 #   [params.analytics.google]
 #     id = "G-XXXXXXXXXX"
 #   [params.analytics.plausible]
 #     domain = "zahi.netlify.app"
+  [params.analytics.siraaj]
+    apiUrl = "https://siraaj.live"
+    projectId = "zahi"
+    autoTrack = true
 
 # Disqus comments (optional)
 # [services]
