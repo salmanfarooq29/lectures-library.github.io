@@ -1,0 +1,7 @@
+# Zahi Theme Configuration
+# This file specifies Hugo version requirements for the theme
+
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.112.0"
