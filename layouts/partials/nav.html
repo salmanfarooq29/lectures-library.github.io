@@ -20,6 +20,12 @@
           {{ end }}
         </ul>
 
+        <!-- Search Button -->
+        <button aria-label="بحث" onclick="openSearch()"
+                class="p-2.5 rounded-md text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
+          {{ partial "icons/search.html" .}}
+        </button>
+
         <!-- Theme Toggle -->
         <button aria-label="تبديل الوضع" id="toggle-theme" 
                 class="p-2.5 rounded-md text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">

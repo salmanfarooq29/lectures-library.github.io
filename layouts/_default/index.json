@@ -1,53 +1,15 @@
-{{- $nodes := slice -}}
-{{- $links := slice -}}
+{{- $pages := slice -}}
 
-{{- /* Build a map of titles to pages for quick lookup */ -}}
-{{- $titleToPage := dict -}}
+{{- /* Collect all pages with searchable data */ -}}
 {{- range .Site.RegularPages -}}
-    {{- $titleToPage = merge $titleToPage (dict .Title .) -}}
+    {{- $content := .Plain | truncate 300 -}}
+    {{- $pages = $pages | append (dict 
+        "id" .RelPermalink 
+        "title" .Title 
+        "content" $content
+        "tags" .Params.tags
+        "date" (.Date.Format "2006-01-02")
+    ) -}}
 {{- end -}}
 
-{{- /* Collect all pages as nodes */ -}}
-{{- range .Site.RegularPages -}}
-    {{- $nodes = $nodes | append (dict "id" .RelPermalink "title" .Title "tags" .Params.tags) -}}
-{{- end -}}
-
-{{- /* Find links by scanning content for wiki-style links and shared tags */ -}}
-{{- range .Site.RegularPages -}}
-    {{- $source := .RelPermalink -}}
-    {{- $content := .RawContent -}}
-    {{- $currentTags := .Params.tags -}}
-    
-    {{- /* Match wiki-style links [[Page Title]] or [[Page Title|Display]] */ -}}
-    {{- $pattern := `\[\[([^\]|]+)(?:\|[^\]]+)?\]\]` -}}
-    {{- range $match := findRE $pattern $content -}}
-        {{- $linkTitle := replaceRE $pattern "$1" $match -}}
-        {{- $targetPage := index $titleToPage $linkTitle -}}
-        {{- if $targetPage -}}
-            {{- $links = $links | append (dict "source" $source "target" $targetPage.RelPermalink "type" "direct") -}}
-        {{- end -}}
-    {{- end -}}
-
-    {{- /* Match standard markdown links to internal pages */ -}}
-    {{- range $match := findRE `\[([^\]]+)\]\((/[^)]+)\)` $content -}}
-        {{- $target := replaceRE `\[([^\]]+)\]\((/[^)]+)\)` "$2" $match -}}
-        {{- if hasPrefix $target "/" -}}
-            {{- $links = $links | append (dict "source" $source "target" $target "type" "direct") -}}
-        {{- end -}}
-    {{- end -}}
-
-    {{- /* Link pages with shared tags */ -}}
-    {{- if $currentTags -}}
-        {{- range $otherPage := $.Site.RegularPages -}}
-            {{- if and (ne $otherPage.RelPermalink $source) $otherPage.Params.tags -}}
-                {{- range $tag := $currentTags -}}
-                    {{- if in $otherPage.Params.tags $tag -}}
-                        {{- $links = $links | append (dict "source" $source "target" $otherPage.RelPermalink "type" "tag" "tag" $tag) -}}
-                    {{- end -}}
-                {{- end -}}
-            {{- end -}}
-        {{- end -}}
-    {{- end -}}
-{{- end -}}
-
-{{- dict "nodes" $nodes "links" $links | jsonify -}}
+{{- dict "nodes" $pages | jsonify -}}

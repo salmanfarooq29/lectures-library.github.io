@@ -46,6 +46,7 @@
     {{- end -}}
 {{- end -}}
 
+<div id="graph-overlay" class="graph-overlay"></div>
 <div id="graph-container" class="graph-wrapper" dir="ltr">
     <div class="graph-header">
         <span class="graph-title">خريطة الروابط</span>
@@ -219,8 +220,26 @@
         
         document.getElementById('graph-expand').addEventListener('click', function() {
             const wrapper = document.getElementById('graph-container');
+            const overlay = document.getElementById('graph-overlay');
             isExpanded = !isExpanded;
             wrapper.classList.toggle('expanded', isExpanded);
+            overlay.classList.toggle('active', isExpanded);
+            
+            setTimeout(() => {
+                const newRect = container.getBoundingClientRect();
+                svg.attr('viewBox', `0 0 ${newRect.width} ${newRect.height}`);
+                simulation.force('center', d3.forceCenter(newRect.width / 2, newRect.height / 2));
+                simulation.alpha(0.3).restart();
+            }, 300);
+        });
+        
+        // Close on overlay click
+        document.getElementById('graph-overlay').addEventListener('click', function() {
+            const wrapper = document.getElementById('graph-container');
+            const overlay = document.getElementById('graph-overlay');
+            isExpanded = false;
+            wrapper.classList.remove('expanded');
+            overlay.classList.remove('active');
             
             setTimeout(() => {
                 const newRect = container.getBoundingClientRect();

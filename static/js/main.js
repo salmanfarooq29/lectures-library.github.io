@@ -1,36 +1,37 @@
 // Theme Toggle
-const toggleThemeButton = document.getElementById('toggle-theme');
-const sunIcon = document.querySelector('.sun-icon');
-const moonIcon = document.querySelector('.moon-icon');
-
-// Initialize theme
-let theme = localStorage.getItem('theme');
-if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark');
-    if (moonIcon) moonIcon.classList.add('hidden');
-    if (sunIcon) sunIcon.classList.remove('hidden');
-} else {
-    document.documentElement.classList.remove('dark');
-    if (moonIcon) moonIcon.classList.remove('hidden');
-    if (sunIcon) sunIcon.classList.add('hidden');
-}
-
-// Toggle theme
-if (toggleThemeButton) {
-    toggleThemeButton.addEventListener('click', function () {
-        const isDark = document.documentElement.classList.toggle('dark');
-        
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleThemeButton = document.getElementById('toggle-theme');
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
+    
+    function setTheme(isDark) {
         if (isDark) {
-            localStorage.setItem('theme', 'dark');
+            document.documentElement.classList.add('dark');
             if (sunIcon) sunIcon.classList.remove('hidden');
             if (moonIcon) moonIcon.classList.add('hidden');
         } else {
-            localStorage.setItem('theme', 'light');
+            document.documentElement.classList.remove('dark');
             if (sunIcon) sunIcon.classList.add('hidden');
             if (moonIcon) moonIcon.classList.remove('hidden');
         }
-    });
-}
+    }
+    
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    setTheme(isDark);
+    
+    // Toggle theme on button click
+    if (toggleThemeButton) {
+        toggleThemeButton.addEventListener('click', function() {
+            const isDarkNow = document.documentElement.classList.contains('dark');
+            const newIsDark = !isDarkNow;
+            setTheme(newIsDark);
+            localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+        });
+    }
+});
 
 // Mobile Menu Toggle
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -45,15 +46,43 @@ if (mobileMenuBtn && mobileMenu) {
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const href = this.getAttribute('href');
+        if (!href || href === '#') return;
+        
+        const target = document.querySelector(href);
         if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+            e.preventDefault();
+            // Update URL hash
+            history.pushState(null, null, href);
+            // Scroll to target with offset for sticky header
+            const headerOffset = 80;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
             });
         }
     });
+});
+
+// Handle initial hash on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+            setTimeout(() => {
+                const headerOffset = 80;
+                const elementPosition = target.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }, 100);
+        }
+    }
 });
 
 // Add copy button to code blocks

@@ -30,25 +30,25 @@
 <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
   {{ $posts := where .Site.RegularPages "Section" "posts" }}
   {{ $tags := .Site.Taxonomies.tags }}
-  
+
   <div class="stat-card">
     <div class="stat-icon">📝</div>
     <div class="stat-number">{{ len $posts }}</div>
     <div class="stat-label">مقالة</div>
   </div>
-  
+
   <div class="stat-card">
     <div class="stat-icon">🏷️</div>
     <div class="stat-number">{{ len $tags }}</div>
     <div class="stat-label">تصنيف</div>
   </div>
-  
+
   <div class="stat-card">
     <div class="stat-icon">🔗</div>
     <div class="stat-number">{{ len .Site.RegularPages }}</div>
     <div class="stat-label">صفحة</div>
   </div>
-  
+
   <div class="stat-card">
     <div class="stat-icon">🌱</div>
     <div class="stat-number">∞</div>
@@ -76,7 +76,7 @@
             {{ .Title }}
           </h3>
           <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-1 mt-0.5">
-            {{ .Description | default .Summary | truncate 60 }}
+            {{ .Description |  truncate 60 }}
           </p>
         </div>
         <time datetime="{{ .Date.Format "2006-01-02" }}" class="text-sm text-stone-400 dark:text-stone-500 whitespace-nowrap">
@@ -98,14 +98,14 @@
       عرض كامل ←
     </a>
   </div>
-  
+
   <div class="home-graph-wrapper">
     {{- /* Generate graph data with tags */ -}}
     {{- $nodes := slice -}}
     {{- $links := slice -}}
     {{- $titleToPage := dict -}}
     {{- $addedTags := slice -}}
-    
+
     {{- range .Site.RegularPages -}}
         {{- $titleToPage = merge $titleToPage (dict .Title .) -}}
     {{- end -}}
@@ -137,7 +137,7 @@
     {{- end -}}
 
     <div id="home-graph" dir="ltr"></div>
-    
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script>
     (function() {
@@ -170,11 +170,11 @@
         .attr('viewBox', `0 0 ${width} ${height}`);
 
       const g = svg.append('g');
-      
+
       const zoom = d3.zoom()
         .scaleExtent([0.3, 3])
         .on('zoom', (event) => g.attr('transform', event.transform));
-      
+
       svg.call(zoom);
 
       const simulation = d3.forceSimulation(nodes)
@@ -221,7 +221,7 @@
           window.location.href = d.id;
         }
       });
-      
+
       node.on('mouseover', function(e, d) {
         d3.select(this).select('circle').attr('r', d.type === 'tag' ? 6 : 8);
         link.attr('stroke-opacity', l => (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.05);
@@ -246,10 +246,10 @@
   <h2 class="text-lg font-semibold text-stone-900 dark:text-stone-100 mb-6">
     المواضيع
   </h2>
-  
+
   <div class="flex flex-wrap gap-2">
     {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
-    <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}/" 
+    <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}/"
        class="tag-cloud-item">
       <span>{{ $name }}</span>
       <span class="tag-count">({{ len $taxonomy }})</span>
