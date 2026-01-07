@@ -4,31 +4,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const sunIcon = document.querySelector('.sun-icon');
     const moonIcon = document.querySelector('.moon-icon');
     
-    function setTheme(isDark) {
-        if (isDark) {
-            document.documentElement.classList.add('dark');
-            if (sunIcon) sunIcon.classList.remove('hidden');
-            if (moonIcon) moonIcon.classList.add('hidden');
-        } else {
-            document.documentElement.classList.remove('dark');
-            if (sunIcon) sunIcon.classList.add('hidden');
-            if (moonIcon) moonIcon.classList.remove('hidden');
-        }
+    function updateIcons(isDark) {
+        if (sunIcon) sunIcon.classList.toggle('hidden', !isDark);
+        if (moonIcon) moonIcon.classList.toggle('hidden', isDark);
     }
     
-    // Initialize theme
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-    setTheme(isDark);
+    function setTheme(isDark) {
+        document.documentElement.classList.toggle('dark', isDark);
+        updateIcons(isDark);
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+    
+    // Initialize icons based on current state (theme already applied in head)
+    const isDark = document.documentElement.classList.contains('dark');
+    updateIcons(isDark);
     
     // Toggle theme on button click
     if (toggleThemeButton) {
         toggleThemeButton.addEventListener('click', function() {
             const isDarkNow = document.documentElement.classList.contains('dark');
-            const newIsDark = !isDarkNow;
-            setTheme(newIsDark);
-            localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+            setTheme(!isDarkNow);
         });
     }
 });
