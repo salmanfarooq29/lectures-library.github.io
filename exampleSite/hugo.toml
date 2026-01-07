@@ -60,6 +60,12 @@ url = "/series"
 weight = 25
 
 [[menu.main]]
+identifier = "projects"
+name = "المشاريع"
+url = "/projects"
+weight = 27
+
+[[menu.main]]
 identifier = "graph"
 name = "الخريطة"
 url = "/graph"

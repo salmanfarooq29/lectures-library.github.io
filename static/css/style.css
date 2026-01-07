@@ -895,3 +895,198 @@ pre {
   @apply transition-all duration-200;
   text-decoration: none;
 }
+
+/* ===== Projects Page ===== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.project-card {
+  @apply bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800;
+  @apply hover:border-stone-300 dark:hover:border-stone-700 hover:shadow-lg;
+  @apply transition-all duration-300 overflow-hidden;
+  position: relative;
+}
+
+.project-thumbnail {
+  @apply relative overflow-hidden;
+  height: 180px;
+}
+
+.project-status-badge {
+  @apply absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-medium;
+  backdrop-filter: blur(8px);
+}
+
+.project-status-badge.status-completed {
+  @apply bg-green-500/90 text-white;
+}
+
+.project-status-badge.status-in-progress {
+  @apply bg-amber-500/90 text-white;
+}
+
+.project-status-badge.status-maintained {
+  @apply bg-blue-500/90 text-white;
+}
+
+.project-status-badge.status-archived {
+  @apply bg-stone-500/90 text-white;
+}
+
+.project-type-badge {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium;
+  @apply bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400;
+}
+
+.project-type-badge.type-personal {
+  @apply bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400;
+}
+
+.project-type-badge.type-contribution {
+  @apply bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400;
+}
+
+.project-type-badge.type-client {
+  @apply bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400;
+}
+
+.project-type-badge.type-open-source {
+  @apply bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400;
+}
+
+.project-featured-badge {
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium;
+  background-color: hsla(143, 16%, 43%, 0.15);
+  color: var(--sage-600);
+}
+
+.dark .project-featured-badge {
+  color: var(--sage-400);
+}
+
+.tech-badge {
+  @apply px-2 py-0.5 rounded text-xs;
+  @apply bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400;
+  font-family: monospace;
+}
+
+.tech-badge-lg {
+  @apply px-3 py-1.5 rounded-lg text-sm;
+  @apply bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400;
+  font-family: monospace;
+}
+
+.project-actions {
+  @apply absolute bottom-4 left-4 flex items-center gap-2;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.2s ease;
+}
+
+.project-card:hover .project-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.project-action-btn {
+  @apply p-2 rounded-lg;
+  @apply bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-400;
+  @apply hover:bg-stone-100 dark:hover:bg-stone-700 hover:text-stone-900 dark:hover:text-stone-100;
+  @apply shadow-md transition-all;
+}
+
+/* Filter Buttons */
+.filter-btn {
+  @apply px-4 py-2 rounded-lg text-sm font-medium;
+  @apply bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400;
+  @apply hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors;
+}
+
+.filter-btn.active {
+  background-color: var(--sage-500);
+  @apply text-white;
+}
+
+/* Project Single Page */
+.project-primary-btn {
+  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium;
+  background-color: var(--sage-500);
+  @apply text-white hover:opacity-90 transition-opacity;
+}
+
+.project-secondary-btn {
+  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium;
+  @apply bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300;
+  @apply hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors;
+}
+
+.project-hero-image {
+  @apply rounded-xl overflow-hidden;
+}
+
+.project-hero-image img {
+  @apply w-full;
+}
+
+.project-info-box {
+  @apply p-6 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800;
+}
+
+.project-status-pill {
+  @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium;
+  @apply bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400;
+}
+
+.project-status-pill .status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.project-status-pill.status-completed .status-dot {
+  @apply bg-green-500;
+}
+
+.project-status-pill.status-in-progress .status-dot {
+  @apply bg-amber-500;
+  animation: pulse 2s infinite;
+}
+
+.project-status-pill.status-maintained .status-dot {
+  @apply bg-blue-500;
+}
+
+.project-status-pill.status-archived .status-dot {
+  @apply bg-stone-400;
+}
+
+.related-project-card {
+  @apply block p-3 rounded-lg;
+  @apply hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors;
+  text-decoration: none;
+}
+
+/* Animation for filter */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
