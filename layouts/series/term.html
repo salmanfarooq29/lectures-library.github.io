@@ -64,7 +64,7 @@
       {{ with $page.Description }}
       <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-2">{{ . }}</p>
       {{ else }}
-      <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-2">{{ $page.Summary | truncate 100 }}</p>
+      <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-2">{{ $page.Summary | plainify | truncate 100 }}</p>
       {{ end }}
       <div class="flex items-center gap-3 mt-2 text-xs text-stone-400 dark:text-stone-500">
         <time datetime="{{ $page.Date.Format "2006-01-02" }}">
