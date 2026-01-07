@@ -4,6 +4,9 @@ theme = "zahi"
 languageCode = "ar"
 defaultContentLanguage = "ar"
 
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+
 [taxonomies]
 tag = "tags"
 
@@ -19,7 +22,13 @@ weight = 10
 identifier = "المقالات"
 name = "المدونه"
 url = "/posts"
-weight = 10
+weight = 20
+
+[[menu.main]]
+identifier = "الخريطة"
+name = "الخريطة"
+url = "/graph"
+weight = 30
 
 
 [params]
@@ -28,6 +37,6 @@ mail = "mailto:mohamed.elhefni@outlook.com"
 site = "https://hefni101.netlify.app/"
 
 
-[services]
-[services.disqus]
-shortname = 'foobar'
+# [services]
+# [services.disqus]
+# shortname = 'foobar'

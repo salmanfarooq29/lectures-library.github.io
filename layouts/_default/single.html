@@ -13,12 +13,14 @@
     <div class="mt-3"></div>
     {{ partial "toc.html" . }}
 
-    {{ .Content }}
+    {{ partial "wikilinks.html" . }}
 
 </div>
 <div class="mt-5 mb-3 px-5">
     {{partial "tags.html" .}}
 </div>
+
+{{ partial "graph.html" . }}
 
 <div id="disqus_thread"></div>
 <script>

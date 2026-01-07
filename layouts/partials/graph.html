@@ -1,0 +1,262 @@
+{{- $currentPage := . -}}
+{{- $currentPath := .RelPermalink -}}
+
+{{- /* Generate graph data */ -}}
+{{- $nodes := slice -}}
+{{- $links := slice -}}
+{{- $titleToPage := dict -}}
+{{- range .Site.RegularPages -}}
+    {{- $titleToPage = merge $titleToPage (dict .Title .) -}}
+{{- end -}}
+{{- range .Site.RegularPages -}}
+    {{- $nodes = $nodes | append (dict "id" .RelPermalink "title" .Title) -}}
+{{- end -}}
+{{- range .Site.RegularPages -}}
+    {{- $source := .RelPermalink -}}
+    {{- $content := .RawContent -}}
+    {{- $currentTags := .Params.tags -}}
+    {{- $pattern := `\[\[([^\]|]+)(?:\|[^\]]+)?\]\]` -}}
+    {{- range $match := findRE $pattern $content -}}
+        {{- $linkTitle := replaceRE $pattern "$1" $match -}}
+        {{- $targetPage := index $titleToPage $linkTitle -}}
+        {{- if $targetPage -}}
+            {{- $links = $links | append (dict "source" $source "target" $targetPage.RelPermalink "type" "direct") -}}
+        {{- end -}}
+    {{- end -}}
+    {{- if $currentTags -}}
+        {{- range $otherPage := $.Site.RegularPages -}}
+            {{- if and (ne $otherPage.RelPermalink $source) $otherPage.Params.tags -}}
+                {{- range $tag := $currentTags -}}
+                    {{- if in $otherPage.Params.tags $tag -}}
+                        {{- $links = $links | append (dict "source" $source "target" $otherPage.RelPermalink "type" "tag") -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+<div id="graph-container" class="graph-wrapper" dir="ltr">
+    <div class="graph-header">
+        <span class="graph-title">خريطة الروابط</span>
+        <button id="graph-expand" class="graph-btn" title="توسيع">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+        </button>
+    </div>
+    <div id="graph" data-current-page="{{ .RelPermalink }}"></div>
+</div>
+
+<!-- D3.js for force-directed graph -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+(function() {
+    // Graph data embedded directly
+    const graphData = {{ dict "nodes" $nodes "links" $links | jsonify | safeJS }};
+    const currentPagePath = "{{ $currentPath }}";
+    
+    const graphContainer = document.getElementById('graph');
+    let isExpanded = false;
+    
+    // Graph configuration
+    const config = {
+        nodeRadius: 6,
+        currentNodeRadius: 8,
+        linkDistance: 80,
+        chargeStrength: -200,
+        fontSize: 11,
+        maxLabelLength: 25
+    };
+    
+    initGraph(graphData);
+    
+    function initGraph(data) {
+        const container = document.getElementById('graph');
+        const rect = container.getBoundingClientRect();
+        const width = rect.width || 300;
+        const height = rect.height || 250;
+        
+        // Filter to show only connected nodes
+        let { nodes, links } = filterGraphData(data, currentPagePath);
+        
+        if (nodes.length === 0) {
+            container.innerHTML = '<p class="text-muted text-sm p-4">لا توجد صفحات مرتبطة</p>';
+            return;
+        }
+        
+        // Create SVG
+        const svg = d3.select('#graph')
+            .append('svg')
+            .attr('width', '100%')
+            .attr('height', '100%')
+            .attr('viewBox', `0 0 ${width} ${height}`)
+            .attr('preserveAspectRatio', 'xMidYMid meet');
+        
+        // Add zoom behavior
+        const g = svg.append('g');
+        
+        const zoom = d3.zoom()
+            .scaleExtent([0.3, 3])
+            .on('zoom', (event) => {
+                g.attr('transform', event.transform);
+            });
+        
+        svg.call(zoom);
+        
+        // Create force simulation
+        const simulation = d3.forceSimulation(nodes)
+            .force('link', d3.forceLink(links).id(d => d.id).distance(config.linkDistance))
+            .force('charge', d3.forceManyBody().strength(config.chargeStrength))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collision', d3.forceCollide().radius(25));
+        
+        // Draw links
+        const link = g.append('g')
+            .attr('class', 'links')
+            .selectAll('line')
+            .data(links)
+            .enter()
+            .append('line')
+            .attr('class', d => `graph-link ${d.type === 'tag' ? 'tag-link' : 'direct-link'}`)
+            .attr('stroke-opacity', d => d.type === 'tag' ? 0.3 : 0.6);
+        
+        // Draw nodes
+        const node = g.append('g')
+            .attr('class', 'nodes')
+            .selectAll('g')
+            .data(nodes)
+            .enter()
+            .append('g')
+            .attr('class', 'node')
+            .call(d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended));
+        
+        // Node circles
+        node.append('circle')
+            .attr('r', d => d.id === currentPagePath ? config.currentNodeRadius : config.nodeRadius)
+            .attr('class', d => `graph-node ${d.id === currentPagePath ? 'current-node' : ''}`);
+        
+        // Node labels - positioned for better Arabic text display
+        node.append('text')
+            .text(d => truncateLabel(d.title, config.maxLabelLength))
+            .attr('x', 0)
+            .attr('y', -12)
+            .attr('text-anchor', 'middle')
+            .attr('class', 'graph-label');
+        
+        // Hover effects
+        node.on('mouseover', function(event, d) {
+            d3.select(this).select('circle').attr('r', config.currentNodeRadius + 2);
+            d3.select(this).select('text').style('opacity', 1).style('font-weight', 'bold');
+            
+            // Highlight connected links
+            link.attr('stroke-opacity', l => 
+                (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.1
+            );
+        })
+        .on('mouseout', function(event, d) {
+            d3.select(this).select('circle').attr('r', d.id === currentPagePath ? config.currentNodeRadius : config.nodeRadius);
+            d3.select(this).select('text').style('font-weight', 'normal');
+            link.attr('stroke-opacity', l => l.type === 'tag' ? 0.3 : 0.6);
+        })
+        .on('click', function(event, d) {
+            if (d.id !== currentPagePath) {
+                window.location.href = d.id;
+            }
+        });
+        
+        // Update positions on tick
+        simulation.on('tick', () => {
+            link
+                .attr('x1', d => d.source.x)
+                .attr('y1', d => d.source.y)
+                .attr('x2', d => d.target.x)
+                .attr('y2', d => d.target.y);
+            
+            node.attr('transform', d => `translate(${d.x},${d.y})`);
+        });
+        
+        // Drag functions
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+        
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+        
+        // Expand button functionality
+        document.getElementById('graph-expand').addEventListener('click', function() {
+            const wrapper = document.getElementById('graph-container');
+            isExpanded = !isExpanded;
+            wrapper.classList.toggle('expanded', isExpanded);
+            
+            // Recenter the graph
+            setTimeout(() => {
+                const newRect = container.getBoundingClientRect();
+                svg.attr('viewBox', `0 0 ${newRect.width} ${newRect.height}`);
+                simulation.force('center', d3.forceCenter(newRect.width / 2, newRect.height / 2));
+                simulation.alpha(0.3).restart();
+            }, 300);
+        });
+    }
+    
+    function filterGraphData(data, currentPath) {
+        const allNodes = data.nodes || [];
+        const allLinks = data.links || [];
+        
+        // Get nodes connected to current page (direct or via tags)
+        const connectedIds = new Set([currentPath]);
+        
+        allLinks.forEach(link => {
+            if (link.source === currentPath || link.target === currentPath) {
+                connectedIds.add(link.source);
+                connectedIds.add(link.target);
+            }
+        });
+        
+        // If no connections, show all nodes (for small sites)
+        const nodes = connectedIds.size <= 1 
+            ? allNodes 
+            : allNodes.filter(n => connectedIds.has(n.id));
+        
+        const nodeIds = new Set(nodes.map(n => n.id));
+        const filteredLinks = allLinks.filter(l => 
+            nodeIds.has(l.source) && nodeIds.has(l.target)
+        );
+        
+        // Remove duplicate links
+        const uniqueLinks = [];
+        const linkSet = new Set();
+        filteredLinks.forEach(link => {
+            const key = [link.source, link.target].sort().join('->');
+            if (!linkSet.has(key)) {
+                linkSet.add(key);
+                uniqueLinks.push(link);
+            }
+        });
+        
+        return { nodes, links: uniqueLinks };
+    }
+    
+    function truncateLabel(text, maxLength) {
+        if (!text) return '';
+        return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+    }
+})();
+</script>

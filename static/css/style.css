@@ -1,16 +1,243 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
 
 .font-custom {
-  font-family: 'Rubik', sans-serif;
+    font-family: "Rubik", sans-serif;
 }
 .hidden {
-  display: none;
+    display: none;
 }
 
 pre {
-  direction:  ltr !important;
+    direction: ltr !important;
+}
+
+/* Graph Styles */
+.graph-wrapper {
+    background: #f5f5f4;
+    border: 1px solid #d6d3d1;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 42rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.dark .graph-wrapper {
+    background: #292524;
+    border-color: #44403c;
+}
+
+.graph-wrapper.expanded {
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    right: 10%;
+    bottom: 10%;
+    max-width: none;
+    z-index: 1000;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.graph-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #d6d3d1;
+    background: #e7e5e4;
+}
+
+.dark .graph-header {
+    background: #1c1917;
+    border-color: #44403c;
+}
+
+.graph-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #57534e;
+}
+
+.dark .graph-title {
+    color: #a8a29e;
+}
+
+.graph-btn {
+    padding: 0.25rem;
+    border-radius: 4px;
+    color: #78716c;
+    transition: all 0.2s;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+}
+
+.graph-btn:hover {
+    background: #d6d3d1;
+    color: #292524;
+}
+
+.dark .graph-btn:hover {
+    background: #44403c;
+    color: #e7e5e4;
+}
+
+#graph {
+    width: 100%;
+    height: 250px;
+}
+
+.graph-wrapper.expanded #graph {
+    height: calc(100% - 40px);
+}
+
+/* Full page graph */
+.full-graph-wrapper {
+    background: #f5f5f4;
+    border: 1px solid #d6d3d1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dark .full-graph-wrapper {
+    background: #292524;
+    border-color: #44403c;
+}
+
+#full-graph {
+    width: 100%;
+    height: 70vh;
+    min-height: 500px;
+}
+
+/* Graph nodes */
+.graph-node {
+    fill: #78716c;
+    stroke: #57534e;
+    stroke-width: 2px;
+    cursor: pointer;
+    transition: fill 0.2s;
+}
+
+.graph-node:hover {
+    fill: #f59e0b;
+}
+
+.graph-node.current-node {
+    fill: #f59e0b;
+    stroke: #d97706;
+    stroke-width: 2.5px;
+}
+
+.dark .graph-node {
+    fill: #a8a29e;
+    stroke: #78716c;
+}
+
+.dark .graph-node:hover {
+    fill: #fbbf24;
+}
+
+.dark .graph-node.current-node {
+    fill: #fbbf24;
+    stroke: #f59e0b;
+}
+
+/* Graph links */
+.graph-link {
+    stroke: #a8a29e;
+    stroke-width: 1.5px;
+}
+
+.graph-link.tag-link {
+    stroke: #d6d3d1;
+    stroke-dasharray: 3, 3;
+}
+
+.dark .graph-link {
+    stroke: #57534e;
+}
+
+.dark .graph-link.tag-link {
+    stroke: #44403c;
+}
+
+/* Graph labels - Arabic friendly */
+.graph-label {
+    font-size: 11px;
+    fill: #57534e;
+    pointer-events: none;
+    opacity: 0.9;
+    font-family: "Rubik", "Noto Sans Arabic", sans-serif;
+}
+
+.dark .graph-label {
+    fill: #d6d3d1;
+}
+
+/* Graph page */
+.graph-page {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding-top: 2rem;
+}
+
+/* RTL adjustments for graph */
+[dir="rtl"] .graph-wrapper {
+    direction: ltr; /* Graph itself stays LTR for proper rendering */
+}
+
+[dir="rtl"] .graph-header {
+    direction: rtl;
+}
+
+/* Expanded graph overlay background */
+.graph-wrapper.expanded::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+/* Wiki-style links */
+.wikilink {
+    color: #2563eb;
+    text-decoration: none;
+    border-bottom: 1px dashed #2563eb;
+    transition: all 0.2s;
+}
+
+.wikilink:hover {
+    color: #1d4ed8;
+    border-bottom-style: solid;
+}
+
+.dark .wikilink {
+    color: #60a5fa;
+    border-bottom-color: #60a5fa;
+}
+
+.dark .wikilink:hover {
+    color: #93c5fd;
+    border-bottom-color: #93c5fd;
+}
+
+.wikilink.broken {
+    color: #dc2626;
+    border-bottom-color: #dc2626;
+    cursor: help;
+}
+
+.dark .wikilink.broken {
+    color: #f87171;
+    border-bottom-color: #f87171;
 }
