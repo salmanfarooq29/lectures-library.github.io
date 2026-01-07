@@ -1090,3 +1090,207 @@ pre {
     transform: translateY(0);
   }
 }
+
+/* =============================================
+   ENHANCED GRAPH PAGE STYLES
+   ============================================= */
+
+/* Graph Page Container */
+.graph-page {
+  @apply relative;
+}
+
+/* Graph Filter Buttons */
+.graph-filter-btn {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium;
+  @apply bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400;
+  @apply hover:bg-stone-200 dark:hover:bg-stone-700 transition-all;
+  @apply border border-transparent;
+}
+
+.graph-filter-btn.active {
+  background-color: var(--sage-500);
+  @apply text-white border-transparent;
+}
+
+.graph-filter-btn:hover:not(.active) {
+  @apply border-stone-300 dark:border-stone-600;
+}
+
+/* Graph Container */
+.full-graph-wrapper {
+  @apply relative rounded-xl overflow-hidden;
+  @apply bg-stone-50 dark:bg-stone-900;
+  @apply border border-stone-200 dark:border-stone-800;
+  height: 500px;
+  transition: all 0.3s ease;
+}
+
+.full-graph-wrapper #full-graph {
+  @apply w-full h-full;
+}
+
+/* Zoom Controls */
+.graph-zoom-controls {
+  @apply absolute bottom-4 left-4 flex flex-col gap-1;
+  z-index: 10;
+}
+
+.graph-zoom-btn {
+  @apply p-2 rounded-lg;
+  @apply bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-400;
+  @apply hover:bg-stone-100 dark:hover:bg-stone-700 hover:text-stone-900 dark:hover:text-stone-100;
+  @apply shadow-md border border-stone-200 dark:border-stone-700;
+  @apply transition-all;
+}
+
+.graph-zoom-btn:active {
+  @apply scale-95;
+}
+
+/* Graph Tooltip */
+.graph-tooltip {
+  @apply absolute pointer-events-none z-20;
+  @apply px-3 py-2 rounded-lg shadow-lg;
+  @apply bg-white dark:bg-stone-800;
+  @apply border border-stone-200 dark:border-stone-700;
+  @apply text-right;
+  min-width: 120px;
+  max-width: 250px;
+}
+
+.graph-tooltip .tooltip-title {
+  @apply font-semibold text-sm text-stone-900 dark:text-stone-100;
+  @apply mb-1 truncate;
+}
+
+.graph-tooltip .tooltip-type {
+  @apply text-xs text-stone-500 dark:text-stone-400;
+  @apply mb-1;
+}
+
+.graph-tooltip .tooltip-connections {
+  @apply text-xs font-medium;
+  color: var(--sage-600);
+}
+
+.graph-tooltip.hidden {
+  display: none;
+}
+
+/* Fullscreen Mode */
+.graph-fullscreen {
+  @apply fixed inset-0 z-50 p-4;
+  @apply bg-white dark:bg-stone-950;
+  overflow: auto;
+}
+
+.graph-fullscreen .full-graph-wrapper {
+  height: calc(100vh - 250px);
+}
+
+.full-graph-wrapper.fullscreen {
+  height: calc(100vh - 200px);
+  @apply rounded-xl;
+}
+
+/* Graph Node & Link Styles (SVG) */
+.graph-node {
+  fill: var(--sage-500);
+  stroke: var(--sage-600);
+  stroke-width: 2;
+  transition: all 0.2s ease;
+}
+
+.graph-node.tag-node {
+  fill: #f59e0b;
+  stroke: #d97706;
+}
+
+.graph-link {
+  stroke: var(--sage-400);
+}
+
+.graph-link.tag-link {
+  stroke: #fbbf24;
+  stroke-dasharray: 4 2;
+}
+
+.graph-link.direct-link {
+  stroke: var(--sage-400);
+}
+
+.graph-label {
+  @apply text-xs font-medium;
+  fill: currentColor;
+  @apply text-stone-700 dark:text-stone-300;
+  pointer-events: none;
+}
+
+.graph-label.tag-label {
+  @apply text-amber-600 dark:text-amber-400;
+  font-size: 10px;
+}
+
+/* Node hover states via CSS (backup for D3 transitions) */
+.node:hover .graph-node {
+  filter: brightness(1.1);
+}
+
+.node:hover .graph-label {
+  @apply font-bold;
+}
+
+/* Search Input Focus State */
+#graph-search:focus {
+  @apply ring-2;
+  --tw-ring-color: var(--sage-500);
+  @apply ring-opacity-50;
+}
+
+/* Stats Badge Animation */
+#pages-count,
+#tags-count,
+#links-count {
+  @apply font-semibold;
+  transition: all 0.3s ease;
+}
+
+/* Graph Page Dark Mode Enhancements */
+.dark .full-graph-wrapper {
+  @apply bg-stone-900/50;
+}
+
+.dark .graph-node {
+  stroke-width: 1.5;
+}
+
+.dark .graph-link {
+  opacity: 0.6;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+  .full-graph-wrapper {
+    height: 400px;
+  }
+  
+  .graph-fullscreen .full-graph-wrapper,
+  .full-graph-wrapper.fullscreen {
+    height: calc(100vh - 280px);
+  }
+  
+  .graph-zoom-controls {
+    @apply bottom-2 left-2;
+  }
+  
+  .graph-zoom-btn {
+    @apply p-1.5;
+  }
+  
+  .graph-tooltip {
+    @apply text-xs px-2 py-1.5;
+    min-width: 100px;
+    max-width: 180px;
+  }
+}
