@@ -1,22 +1,36 @@
 {{ partial "header.html" . }}
 
-<div class="graph-page px-4">
-    <h1 class="text-2xl font-bold mb-4">خريطة الموقع</h1>
-    <p class="text-muted mb-4">اضغط على أي عقدة للانتقال إلى الصفحة. يمكنك السحب والتكبير.</p>
+<div class="graph-page">
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-2">خريطة الموقع</h1>
+        <p class="text-sm text-stone-500 dark:text-stone-400">اضغط على أي عقدة للانتقال إلى الصفحة. يمكنك السحب والتكبير.</p>
+        <div class="flex items-center gap-4 mt-3 text-xs text-stone-500">
+            <span class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-sage-500"></span>
+                صفحات
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                وسوم
+            </span>
+        </div>
+    </div>
     <div id="full-graph-container" class="full-graph-wrapper" dir="ltr">
         <div id="full-graph"></div>
     </div>
 </div>
 
-{{- /* Generate graph data directly in template */ -}}
+{{- /* Generate graph data with tags */ -}}
 {{- $nodes := slice -}}
 {{- $links := slice -}}
 {{- $titleToPage := dict -}}
+{{- $addedTags := slice -}}
+
 {{- range .Site.RegularPages -}}
     {{- $titleToPage = merge $titleToPage (dict .Title .) -}}
 {{- end -}}
 {{- range .Site.RegularPages -}}
-    {{- $nodes = $nodes | append (dict "id" .RelPermalink "title" .Title) -}}
+    {{- $nodes = $nodes | append (dict "id" .RelPermalink "title" .Title "type" "page") -}}
 {{- end -}}
 {{- range .Site.RegularPages -}}
     {{- $source := .RelPermalink -}}
@@ -31,14 +45,13 @@
         {{- end -}}
     {{- end -}}
     {{- if $currentTags -}}
-        {{- range $otherPage := $.Site.RegularPages -}}
-            {{- if and (ne $otherPage.RelPermalink $source) $otherPage.Params.tags -}}
-                {{- range $tag := $currentTags -}}
-                    {{- if in $otherPage.Params.tags $tag -}}
-                        {{- $links = $links | append (dict "source" $source "target" $otherPage.RelPermalink "type" "tag") -}}
-                    {{- end -}}
-                {{- end -}}
+        {{- range $tag := $currentTags -}}
+            {{- $tagId := printf "tag:%s" $tag -}}
+            {{- if not (in $addedTags $tagId) -}}
+                {{- $nodes = $nodes | append (dict "id" $tagId "title" $tag "type" "tag") -}}
+                {{- $addedTags = $addedTags | append $tagId -}}
             {{- end -}}
+            {{- $links = $links | append (dict "source" $source "target" $tagId "type" "tag") -}}
         {{- end -}}
     {{- end -}}
 {{- end -}}
@@ -47,18 +60,15 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
 (function() {
-    // Graph data embedded directly
     const graphData = {{ dict "nodes" $nodes "links" $links | jsonify | safeJS }};
     
-    const graphContainer = document.getElementById('full-graph');
-    
-    // Graph configuration
     const config = {
-        nodeRadius: 10,
-        linkDistance: 120,
-        chargeStrength: -400,
-        fontSize: 12,
-        maxLabelLength: 30
+        nodeRadius: 8,
+        tagNodeRadius: 6,
+        linkDistance: 100,
+        chargeStrength: -300,
+        fontSize: 11,
+        maxLabelLength: 25
     };
     
     initGraph(graphData);
@@ -72,11 +82,10 @@
         let { nodes, links } = processGraphData(data);
         
         if (nodes.length === 0) {
-            container.innerHTML = '<p class="text-muted p-4">لا توجد صفحات</p>';
+            container.innerHTML = '<p class="text-center text-stone-500 p-4">لا توجد صفحات</p>';
             return;
         }
         
-        // Create SVG
         const svg = d3.select('#full-graph')
             .append('svg')
             .attr('width', '100%')
@@ -84,7 +93,6 @@
             .attr('viewBox', `0 0 ${width} ${height}`)
             .attr('preserveAspectRatio', 'xMidYMid meet');
         
-        // Add zoom behavior
         const g = svg.append('g');
         
         const zoom = d3.zoom()
@@ -95,14 +103,12 @@
         
         svg.call(zoom);
         
-        // Create force simulation
         const simulation = d3.forceSimulation(nodes)
             .force('link', d3.forceLink(links).id(d => d.id).distance(config.linkDistance))
             .force('charge', d3.forceManyBody().strength(config.chargeStrength))
             .force('center', d3.forceCenter(width / 2, height / 2))
-            .force('collision', d3.forceCollide().radius(40));
+            .force('collision', d3.forceCollide().radius(30));
         
-        // Draw links
         const link = g.append('g')
             .attr('class', 'links')
             .selectAll('line')
@@ -110,9 +116,8 @@
             .enter()
             .append('line')
             .attr('class', d => `graph-link ${d.type === 'tag' ? 'tag-link' : 'direct-link'}`)
-            .attr('stroke-opacity', d => d.type === 'tag' ? 0.2 : 0.5);
+            .attr('stroke-opacity', d => d.type === 'tag' ? 0.2 : 0.4);
         
-        // Draw nodes
         const node = g.append('g')
             .attr('class', 'nodes')
             .selectAll('g')
@@ -125,30 +130,26 @@
                 .on('drag', dragged)
                 .on('end', dragended));
         
-        // Node circles
         node.append('circle')
-            .attr('r', config.nodeRadius)
-            .attr('class', 'graph-node');
+            .attr('r', d => d.type === 'tag' ? config.tagNodeRadius : config.nodeRadius)
+            .attr('class', d => d.type === 'tag' ? 'graph-node tag-node' : 'graph-node');
         
-        // Node labels - centered above node for Arabic text
         node.append('text')
             .text(d => truncateLabel(d.title, config.maxLabelLength))
             .attr('x', 0)
-            .attr('y', -15)
+            .attr('y', -12)
             .attr('text-anchor', 'middle')
-            .attr('class', 'graph-label');
+            .attr('class', d => `graph-label ${d.type === 'tag' ? 'tag-label' : ''}`);
         
-        // Hover effects
         node.on('mouseover', function(event, d) {
-            d3.select(this).select('circle').attr('r', config.nodeRadius + 4);
-            d3.select(this).select('text').style('font-weight', 'bold').style('font-size', '14px');
+            const radius = d.type === 'tag' ? config.tagNodeRadius + 3 : config.nodeRadius + 3;
+            d3.select(this).select('circle').attr('r', radius);
+            d3.select(this).select('text').style('font-weight', '600');
             
-            // Highlight connected links
             link.attr('stroke-opacity', l => 
                 (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.05
             );
             
-            // Dim unconnected nodes
             node.style('opacity', n => {
                 if (n.id === d.id) return 1;
                 const isConnected = links.some(l => 
@@ -159,16 +160,20 @@
             });
         })
         .on('mouseout', function(event, d) {
-            d3.select(this).select('circle').attr('r', config.nodeRadius);
-            d3.select(this).select('text').style('font-weight', 'normal').style('font-size', '12px');
-            link.attr('stroke-opacity', l => l.type === 'tag' ? 0.2 : 0.5);
+            const radius = d.type === 'tag' ? config.tagNodeRadius : config.nodeRadius;
+            d3.select(this).select('circle').attr('r', radius);
+            d3.select(this).select('text').style('font-weight', 'normal');
+            link.attr('stroke-opacity', l => l.type === 'tag' ? 0.2 : 0.4);
             node.style('opacity', 1);
         })
         .on('click', function(event, d) {
-            window.location.href = d.id;
+            if (d.type === 'tag') {
+                window.location.href = '/tags/' + encodeURIComponent(d.title.toLowerCase()) + '/';
+            } else {
+                window.location.href = d.id;
+            }
         });
         
-        // Update positions on tick
         simulation.on('tick', () => {
             link
                 .attr('x1', d => d.source.x)
@@ -179,7 +184,6 @@
             node.attr('transform', d => `translate(${d.x},${d.y})`);
         });
         
-        // Drag functions
         function dragstarted(event, d) {
             if (!event.active) simulation.alphaTarget(0.3).restart();
             d.fx = d.x;
@@ -202,7 +206,6 @@
         const nodes = data.nodes || [];
         const rawLinks = data.links || [];
         
-        // Remove duplicate links
         const uniqueLinks = [];
         const linkSet = new Set();
         rawLinks.forEach(link => {
@@ -218,7 +221,7 @@
     
     function truncateLabel(text, maxLength) {
         if (!text) return '';
-        return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+        return text.length > maxLength ? text.substring(0, maxLength - 2) + '..' : text;
     }
 })();
 </script>
