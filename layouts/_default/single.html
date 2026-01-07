@@ -12,6 +12,10 @@
       <a href="/" class="hover:text-stone-600 dark:hover:text-stone-300 transition-colors">الرئيسية</a>
       <span>/</span>
       <a href="/posts/" class="hover:text-stone-600 dark:hover:text-stone-300 transition-colors">المقالات</a>
+      {{ if .Params.series }}
+      <span>/</span>
+      <a href="/series/{{ .Params.series | urlize }}/" class="hover:text-stone-600 dark:hover:text-stone-300 transition-colors">{{ .Params.series }}</a>
+      {{ end }}
     </nav>
 
     <!-- Title -->
@@ -25,10 +29,12 @@
         {{ partial "arabic-date.html" .Date }}
       </time>
 
-      {{ if .Params.readingTime }}
+      {{/* Auto-calculate reading time: ~200 words per minute for Arabic */}}
+      {{ $wordCount := .WordCount }}
+      {{ $readingTime := div $wordCount 200 }}
+      {{ if lt $readingTime 1 }}{{ $readingTime = 1 }}{{ end }}
       <span class="text-stone-300 dark:text-stone-600">•</span>
-      <span>{{ .Params.readingTime }} دقائق قراءة</span>
-      {{ end }}
+      <span>{{ $readingTime }} {{ if eq $readingTime 1 }}دقيقة{{ else }}دقائق{{ end }} قراءة</span>
     </div>
 
     <!-- Tags -->
@@ -42,6 +48,9 @@
     </div>
     {{ end }}
   </header>
+
+  <!-- Series Navigation -->
+  {{ partial "series-nav.html" . }}
 
   <!-- Table of Contents -->
   {{ if .Params.toc | default true }}
@@ -61,8 +70,11 @@
     {{ partial "wikilinks.html" . }}
   </div>
 
+  <!-- Backlinks Section -->
+  {{ partial "backlinks.html" . }}
+
   <!-- Article Footer -->
-  <footer class="border-t border-stone-200 dark:border-stone-800 pt-6">
+  <footer class="border-t border-stone-200 dark:border-stone-800 pt-6 mt-8">
     <!-- Share Section -->
     <div class="flex items-center justify-between">
       <span class="text-sm text-stone-500 dark:text-stone-400">شارك المقالة</span>

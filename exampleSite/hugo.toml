@@ -9,6 +9,7 @@ home = ["HTML", "RSS", "JSON"]
 
 [taxonomies]
 tag = "tags"
+series = "series"
 
 [menu]
 [[menu.main]]
@@ -25,6 +26,12 @@ url = "/posts"
 weight = 20
 
 [[menu.main]]
+identifier = "السلاسل"
+name = "السلاسل"
+url = "/series"
+weight = 25
+
+[[menu.main]]
 identifier = "الخريطة"
 name = "الخريطة"
 url = "/graph"
@@ -35,7 +42,6 @@ weight = 30
 github = "https://www.github.com/mohamedelhefni"
 mail = "mailto:mohamed.elhefni@outlook.com"
 site = "https://hefni101.netlify.app/"
-
 
 # [services]
 # [services.disqus]

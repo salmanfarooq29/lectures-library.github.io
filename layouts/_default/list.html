@@ -15,7 +15,7 @@
 {{ .Content }}
 
 {{- $pages := union .RegularPages .Sections }}
-{{- $paginator := .Paginate $pages }}
+{{- $paginator := .Paginate $pages  }}
 
 <!-- Filter/Sort -->
 <div class="flex items-center justify-between mb-6">
@@ -36,9 +36,13 @@
             {{ .Title }}
           </h2>
 
-          <!-- Description -->
-          <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-1">
-            {{ .Description | truncate 80 }}
+          <!-- Description/Summary - Plain text -->
+          <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-2">
+            {{- with .Description -}}
+              {{ . | plainify | truncate 120 }}
+            {{- else -}}
+              {{ .Summary | plainify | truncate 120 }}
+            {{- end -}}
           </p>
         </div>
 
@@ -48,14 +52,22 @@
         </time>
       </div>
 
-      <!-- Tags -->
-      {{ if .Params.tags }}
-      <div class="flex flex-wrap gap-1.5 mt-2">
+      <!-- Tags & Series -->
+      <div class="flex flex-wrap items-center gap-2 mt-2">
+        {{ if .Params.series }}
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-sage-500/10 text-sage-600 dark:text-sage-400">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+          {{ .Params.series }}
+        </span>
+        {{ end }}
+        {{ if .Params.tags }}
         {{ range first 3 .Params.tags }}
         <span class="tag-pill text-xs">{{ . }}</span>
         {{ end }}
+        {{ end }}
       </div>
-      {{ end }}
     </a>
   </article>
   {{ end }}
@@ -66,11 +78,13 @@
 <nav class="flex items-center justify-center gap-2 mt-10 pt-6 border-t border-stone-200 dark:border-stone-800">
   {{- if $paginator.HasPrev }}
   <a class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors" href="{{ $paginator.Prev.URL | absURL }}">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
     </svg>
+
     السابق
   </a>
+
   {{- end }}
 
   <span class="text-stone-400 dark:text-stone-500 text-sm px-3">
@@ -79,10 +93,12 @@
 
   {{- if $paginator.HasNext }}
   <a class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors" href="{{ $paginator.Next.URL | absURL }}">
-    التالي
-    <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
-    </svg>
+
+      التالي
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+      </svg>
+
   </a>
   {{- end }}
 </nav>
