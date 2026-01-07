@@ -1,6 +1,5 @@
-baseURL = "https://mynewhugosite.com"
+baseURL = "https://zahi.netlify.app/"
 title = "زاهي"
-theme = "zahi"
 languageCode = "ar"
 defaultContentLanguage = "ar"
 
@@ -11,13 +10,25 @@ home = ["HTML", "RSS", "JSON"]
 tag = "tags"
 series = "series"
 
+# Use Hugo Modules to import theme from parent directory
+[module]
+  [[module.imports]]
+    path = "github.com/mohamedelhefni/zahi"
+    
+  [[module.mounts]]
+    source = "content"
+    target = "content"
+    
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+
 [menu]
 [[menu.main]]
 identifier = "الرئيسية"
 name = "الرئيسية"
 url = "/"
 weight = 10
-
 
 [[menu.main]]
 identifier = "المقالات"
@@ -36,7 +47,6 @@ identifier = "الخريطة"
 name = "الخريطة"
 url = "/graph"
 weight = 30
-
 
 [params]
 github = "https://www.github.com/mohamedelhefni"
