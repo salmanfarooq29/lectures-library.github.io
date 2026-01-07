@@ -174,7 +174,8 @@ hugo new site my-digital-garden
 
 # إضافة القالب
 cd my-digital-garden
-git submodule add https://github.com/username/zahi themes/zahi
+git init
+git submodule add https://github.com/mohamedelhefni/zahi themes/zahi
 ```
 
 ### 2. الإعدادات
