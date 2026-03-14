@@ -1,24 +1,22 @@
-# This tells the CMS where his images go
 media:
   input: static/images
   output: /images
 
-# This creates the "Folders" he will see in the editor
 content:
-  - label: English Lectures
+  - name: english_lectures
+    label: English Lectures
     type: collection
-    path: content/en/posts # Where Hugo stores English files
+    path: content/en/posts
     format: md
     fields:
-      - { name: title, label: Lecture Title, type: string }
-      - { name: date, label: Date, type: date }
-      - { name: body, label: Lecture Content (English), type: rich-text }
+      - { name: title, label: Title, type: string }
+      - { name: body, label: Lecture Content, type: rich-text }
 
-  - label: محاضرات عربية (Arabic)
+  - name: arabic_lectures
+    label: محاضرات عربية
     type: collection
-    path: content/ar/posts # Where Hugo stores Arabic files
+    path: content/ar/posts
     format: md
     fields:
-      - { name: title, label: عنوان المحاضرة, type: string }
-      - { name: date, label: التاريخ, type: date }
+      - { name: title, label: العنوان, type: string }
       - { name: body, label: محتوى المحاضرة, type: rich-text }
