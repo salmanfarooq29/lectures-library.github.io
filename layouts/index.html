@@ -19,10 +19,10 @@
 </section>
 
 <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
-  {{/* FIXED SYNTAX: site.AllRegularPages works in Hugo v0.157+ */}}
-  {{ $posts := where site.AllRegularPages "Section" "posts" }}
-  {{ $tags := site.Taxonomies.tags }}
-  {{ $series := site.Taxonomies.series }}
+  {{/* The $ at the start makes this a global call that won't fail */}}
+  {{ $posts := where $.Site.AllRegularPages "Section" "posts" }}
+  {{ $tags := $.Site.Taxonomies.tags }}
+  {{ $series := $.Site.Taxonomies.series }}
 
   <div class="stat-card">
     <div class="stat-icon">📝</div>
@@ -44,7 +44,7 @@
 
   <div class="stat-card">
     <div class="stat-icon">🔗</div>
-    <div class="stat-number">{{ len site.AllRegularPages }}</div>
+    <div class="stat-number">{{ len $.Site.AllRegularPages }}</div>
     <div class="stat-label">صفحة</div>
   </div>
 </section>
