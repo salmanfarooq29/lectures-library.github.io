@@ -1,25 +1,25 @@
 baseURL = "https://salmanfarooq29.github.io/lectures-library.github.io/"
-title = "Lectures Library"
-languageCode = "en"
-defaultContentLanguage = "en"
+title = "مكتبة المحاضرات"
+languageCode = "ar"
+defaultContentLanguage = "ar"
 
-# Essential fixes for GitHub Pages sub-folders
+# These two lines are the SECRET to fixing the "Big Q"
 canonifyURLs = true
 relativeURLs = true
 
 [params]
-  description = "Educational Lectures Library"
-  author = "The Professor"
+  description = "مكتبة المحاضرات التعليمية"
+  author = "البروفيسور"
   darkMode = false 
 
 [languages]
-  [languages.en]
-    languageName = "English"
-    contentDir = "content/en"
-    weight = 1
   [languages.ar]
     languageName = "العربية"
     contentDir = "content/ar"
+    weight = 1
+  [languages.en]
+    languageName = "English"
+    contentDir = "content/en"
     weight = 2
 
 [taxonomies]
@@ -29,9 +29,4 @@ relativeURLs = true
 
 [markup]
   [markup.goldmark.renderer]
-    unsafe = true 
-
-# Privacy settings (Updated for Hugo 2026)
-[privacy]
-  [privacy.x]
-    enableDNT = true
+    unsafe = true
