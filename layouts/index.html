@@ -1,102 +1,197 @@
 {{ partial "header.html" . }}
 
+
+
 <section class="py-12 md:py-16">
+
   <div class="space-y-4">
+
     <p class="text-stone-500 dark:text-stone-400">
+
       <span class="animate-wave inline-block ml-1">👋</span>
-      Welcome
+
+      أهلاً بك
+
     </p>
 
     <h1 class="text-3xl md:text-4xl font-semibold text-stone-900 dark:text-stone-100 leading-tight">
+
       {{ .Title }}
+
     </h1>
 
     <p class="text-stone-600 dark:text-stone-400 leading-relaxed max-w-xl">
+
       {{ .Description }}
+
     </p>
 
     <div class="pt-2">
+
       {{ partial "social.html" . }}
+
     </div>
+
   </div>
+
 </section>
+
+
 
 <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
+
   {{ $posts := where .Site.RegularPages "Section" "posts" }}
+
   {{ $tags := .Site.Taxonomies.tags }}
+
   {{ $series := .Site.Taxonomies.series }}
 
+
+
   <div class="stat-card">
+
     <div class="stat-icon">📝</div>
+
     <div class="stat-number">{{ if $posts }}{{ len $posts }}{{ else }}0{{ end }}</div>
-    <div class="stat-label">Articles</div>
+
+    <div class="stat-label">مقالة</div>
+
   </div>
 
+
+
   <div class="stat-card">
+
     <div class="stat-icon">📚</div>
+
     <div class="stat-number">{{ if $series }}{{ len $series }}{{ else }}0{{ end }}</div>
-    <div class="stat-label">Series</div>
+
+    <div class="stat-label">سلسلة</div>
+
   </div>
 
+
+
   <div class="stat-card">
+
     <div class="stat-icon">🏷️</div>
+
     <div class="stat-number">{{ if $tags }}{{ len $tags }}{{ else }}0{{ end }}</div>
-    <div class="stat-label">Tags</div>
+
+    <div class="stat-label">تصنيف</div>
+
   </div>
 
+
+
   <div class="stat-card">
+
     <div class="stat-icon">🔗</div>
+
     <div class="stat-number">{{ len .Site.RegularPages }}</div>
-    <div class="stat-label">Pages</div>
+
+    <div class="stat-label">صفحة</div>
+
   </div>
+
 </section>
 
+
+
+{{ if and $series (gt (len $series) 0) }}
+
 <section class="mb-12">
+
   <div class="flex items-center justify-between mb-6">
-    <h2 class="text-lg font-semibold text-stone-900 dark:text-stone-100">
-      Latest Articles
-    </h2>
-    <a href="/posts/" class="text-sm text-stone-500 hover:text-stone-900 transition-colors">
-      View All →
-    </a>
+
+    <h2 class="text-lg font-semibold text-stone-900 dark:text-stone-100">السلاسل التعليمية</h2>
+
+    <a href="/series/" class="text-sm text-stone-500 hover:text-stone-900 dark:text-stone-400">عرض الكل ←</a>
+
+  </div>
+
+  <div class="grid gap-3">
+
+    {{ range first 3 $series.Alphabetical }}
+
+      {{ $seriesPages := .Pages }}
+
+      {{ if gt (len $seriesPages) 0 }}
+
+        {{ $firstPage := index $seriesPages 0 }}
+
+        <a href="{{ .Page.RelPermalink }}" class="series-card group">
+
+          <div class="flex items-start justify-between gap-4">
+
+            <div class="flex-1">
+
+              <h3 class="font-semibold text-stone-900 dark:text-stone-100">{{ .Page.Title }}</h3>
+
+              <div class="text-xs text-stone-400">{{ len $seriesPages }} أجزاء</div>
+
+            </div>
+
+          </div>
+
+        </a>
+
+      {{ end }}
+
+    {{ end }}
+
+  </div>
+
+</section>
+
+{{ end }}
+
+
+
+<section class="mb-12">
+
+  <div class="flex items-center justify-between mb-6">
+
+    <h2 class="text-lg font-semibold text-stone-900 dark:text-stone-100">أحدث المقالات</h2>
+
+    <a href="/posts/" class="text-sm text-stone-500 hover:text-stone-900">عرض الكل ←</a>
+
   </div>
 
   <div class="space-y-1">
-    {{ range first 5 $posts }}
-    <a href="{{ .RelPermalink }}" class="group block p-3 -mx-3 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900 transition-colors">
-      <div class="flex items-start justify-between gap-4">
-        <div class="flex-1 min-w-0">
-          <h3 class="font-medium text-stone-900 dark:text-stone-100 group-hover:text-sage-600 transition-colors">
-            {{ .Title }}
-          </h3>
-          <p class="text-sm text-stone-500 line-clamp-1 mt-0.5">
-            {{ .Summary | plainify | truncate 60 }}
-          </p>
+
+    {{ if $posts }}
+
+      {{ range first 5 $posts }}
+
+      <a href="{{ .RelPermalink }}" class="group block p-3 -mx-3 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900">
+
+        <div class="flex items-start justify-between gap-4">
+
+          <div class="flex-1">
+
+            <h3 class="font-medium text-stone-900 dark:text-stone-100">{{ .Title }}</h3>
+
+          </div>
+
+          <time class="text-sm text-stone-400">{{ .Date.Format "2006-01-02" }}</time>
+
         </div>
-        <time class="text-sm text-stone-400 whitespace-nowrap">
-          {{ .Date.Format "Jan 2, 2006" }}
-        </time>
-      </div>
-    </a>
+
+      </a>
+
+      {{ end }}
+
     {{ else }}
-      <p class="text-stone-500 italic">No articles yet.</p>
+
+      <p class="text-stone-500 italic">لا توجد مقالات حالياً</p>
+
     {{ end }}
+
   </div>
+
 </section>
 
-<section class="mb-12">
-  <h2 class="text-lg font-semibold text-stone-900 dark:text-stone-100 mb-6">
-    Topics
-  </h2>
 
-  <div class="flex flex-wrap gap-2">
-    {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
-    <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}/" class="tag-cloud-item">
-      <span>{{ $name }}</span>
-      <span class="tag-count">({{ len $taxonomy }})</span>
-    </a>
-    {{ end }}
-  </div>
-</section>
 
 {{ partial "footer.html" . }}
