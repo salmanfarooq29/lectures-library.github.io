@@ -90,7 +90,13 @@
   [privacy.googleAnalytics]
     anonymizeIP = true
     respectDoNotTrack = true
-  [privacy.twitter]
+  [privacy.x]
     enableDNT = true
   [privacy.youtube]
     privacyEnhanced = true
+
+# This helps the theme handle empty series without crashing
+[taxonomies]
+  series = "series"
+  tag = "tags"
+  category = "categories"
