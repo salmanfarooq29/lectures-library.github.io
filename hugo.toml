@@ -1,9 +1,12 @@
-baseURL = "/lectures-library.github.io/"
+baseURL = "https://salmanfarooq29.github.io/lectures-library.github.io/"
 title = "مكتبة المحاضرات"
 languageCode = "ar"
 defaultContentLanguage = "ar"
 
-# Zahi Theme Configuration
+# These two lines are the SECRET to fixing the "Big Q"
+canonifyURLs = true
+relativeURLs = true
+
 [params]
   description = "مكتبة المحاضرات التعليمية"
   author = "البروفيسور"
@@ -18,11 +21,6 @@ defaultContentLanguage = "ar"
     languageName = "English"
     contentDir = "content/en"
     weight = 2
-
-# Privacy settings (Updated for Hugo 2026)
-[privacy]
-  [privacy.x]
-    enableDNT = true
 
 [taxonomies]
   series = "series"
