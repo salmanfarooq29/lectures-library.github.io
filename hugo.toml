@@ -1,4 +1,4 @@
-baseURL = "https://salmanfarooq29.github.io/lectures-library.github.io/"
+baseURL = "/lectures-library.github.io/"
 title = "مكتبة المحاضرات"
 languageCode = "ar"
 defaultContentLanguage = "ar"
