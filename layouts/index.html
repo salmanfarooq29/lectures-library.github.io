@@ -1,72 +1,135 @@
 {{ partial "header.html" . }}
 
-<section class="py-12 md:py-16">
-  <div class="space-y-4">
-    <p class="text-stone-500 dark:text-stone-400">
-      <span class="animate-wave inline-block ml-1">👋</span>
-      أهلاً بك
-    </p>
-    <h1 class="text-3xl md:text-4xl font-semibold text-stone-900 dark:text-stone-100 leading-tight">
+<style>
+  /* Premium Typography & Colors */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap');
+
+  :root {
+    --primary-slate: #1e293b;
+    --accent-sage: #64748b;
+    --card-bg: #ffffff;
+    --bg-soft: #f8fafc;
+  }
+
+  body { 
+    font-family: 'Inter', 'IBM Plex Sans Arabic', sans-serif; 
+    background-color: var(--bg-soft);
+  }
+
+  /* Professional Card Styling */
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 12px;
+    padding: 1.5rem !important;
+    transition: transform 0.2s ease;
+  }
+
+  .lecture-card {
+    background: var(--card-bg);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    display: block;
+    transition: all 0.3s ease;
+  }
+
+  .lecture-card:hover {
+    border-color: var(--accent-sage);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .section-title {
+    border-right: 4px solid var(--primary-slate);
+    padding-right: 12px;
+    margin-bottom: 1.5rem;
+    color: var(--primary-slate);
+  }
+
+  [dir="ltr"] .section-title {
+    border-right: none;
+    border-left: 4px solid var(--primary-slate);
+    padding-left: 12px;
+  }
+</style>
+
+<section class="py-16">
+  <div class="space-y-6">
+    <div class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-blue-800 uppercase bg-blue-100 rounded-full">
+      Official Archive
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">
       {{ .Title }}
     </h1>
-    <p class="text-stone-600 dark:text-stone-400 leading-relaxed max-w-xl">
+    <p class="text-lg text-slate-600 leading-relaxed max-w-2xl">
       {{ .Description }}
     </p>
-    <div class="pt-2">
+    <div class="pt-4">
       {{ partial "social.html" . }}
     </div>
   </div>
 </section>
 
-<section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
-  {{/* We are using 'site' globally here - no dots, no dollars */}}
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
   {{ $all_posts := where site.AllPages "Section" "posts" }}
   
-  <div class="stat-card">
-    <div class="stat-icon">📝</div>
-    <div class="stat-number">{{ len $all_posts }}</div>
-    <div class="stat-label">مقالة</div>
+  <div class="stat-card text-center">
+    <div class="text-3xl mb-2">📄</div>
+    <div class="text-2xl font-bold text-slate-900">{{ len $all_posts }}</div>
+    <div class="text-sm text-slate-500 font-medium uppercase tracking-wide">Lectures</div>
   </div>
 
-  <div class="stat-card">
-    <div class="stat-icon">📚</div>
-    <div class="stat-number">{{ len site.Taxonomies.series }}</div>
-    <div class="stat-label">سلسلة</div>
+  <div class="stat-card text-center">
+    <div class="text-3xl mb-2">📁</div>
+    <div class="text-2xl font-bold text-slate-900">{{ len site.Taxonomies.series }}</div>
+    <div class="text-sm text-slate-500 font-medium uppercase tracking-wide">Series</div>
   </div>
 
-  <div class="stat-card">
-    <div class="stat-icon">🏷️</div>
-    <div class="stat-number">{{ len site.Taxonomies.tags }}</div>
-    <div class="stat-label">تصنيف</div>
+  <div class="stat-card text-center">
+    <div class="text-3xl mb-2">🔖</div>
+    <div class="text-2xl font-bold text-slate-900">{{ len site.Taxonomies.tags }}</div>
+    <div class="text-sm text-slate-500 font-medium uppercase tracking-wide">Topics</div>
   </div>
 
-  <div class="stat-card">
-    <div class="stat-icon">🔗</div>
-    <div class="stat-number">{{ len site.AllPages }}</div>
-    <div class="stat-label">صفحة</div>
+  <div class="stat-card text-center">
+    <div class="text-3xl mb-2">🌐</div>
+    <div class="text-2xl font-bold text-slate-900">Bilingual</div>
+    <div class="text-sm text-slate-500 font-medium uppercase tracking-wide">EN / AR</div>
   </div>
 </section>
 
-<section class="mb-12">
-  <div class="flex items-center justify-between mb-6">
-    <h2 class="text-lg font-semibold text-stone-900 dark:text-stone-100">أحدث المقالات</h2>
-    <a href="/posts/" class="text-sm text-stone-500 hover:text-stone-900">عرض الكل ←</a>
+<section class="mb-20">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-2xl font-bold text-slate-900 section-title">
+      Latest Academic Content
+    </h2>
+    <a href="/posts/" class="text-blue-600 font-semibold hover:underline">
+      Full Catalog →
+    </a>
   </div>
   
-  <div class="space-y-1">
+  <div class="grid gap-4">
     {{ if gt (len $all_posts) 0 }}
-      {{ range first 5 $all_posts.ByDate.Reverse }}
-      <a href="{{ .RelPermalink }}" class="group block p-3 -mx-3 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900">
-        <div class="flex items-start justify-between gap-4">
+      {{ range first 6 $all_posts.ByDate.Reverse }}
+      <a href="{{ .RelPermalink }}" class="lecture-card">
+        <div class="flex items-center justify-between">
           <div class="flex-1">
-            <h3 class="font-medium text-stone-900 dark:text-stone-100">{{ .Title }}</h3>
+            <h3 class="text-lg font-semibold text-slate-900 mb-1">{{ .Title }}</h3>
+            <span class="text-xs font-bold text-blue-500 uppercase">{{ if eq .Language.Lang "ar" }}Arabic{{ else }}English{{ end }}</span>
           </div>
-          <time class="text-sm text-stone-400">{{ .Date.Format "2006-01-02" }}</time>
+          <div class="text-slate-400 text-sm italic">
+            {{ .Date.Format "Jan 2006" }}
+          </div>
         </div>
       </a>
       {{ end }}
     {{ else }}
-      <p class="text-stone-500 italic">لا توجد مقالات حالياً</p>
+      <div class="p-8 text-center border-2 border-dashed border-slate-200 rounded-xl text-slate-400">
+        No content has been published yet.
+      </div>
     {{ end }}
   </div>
 </section>
