@@ -19,26 +19,24 @@
 </section>
 
 <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
-  {{/* This is the new 2026 syntax for "all languages" */}}
-  {{ $posts := where site.AllPages "Section" "posts" }}
-  {{ $tags := site.Taxonomies.tags }}
-  {{ $series := site.Taxonomies.series }}
-
+  {{/* We are using 'site' globally here - no dots, no dollars */}}
+  {{ $all_posts := where site.AllPages "Section" "posts" }}
+  
   <div class="stat-card">
     <div class="stat-icon">📝</div>
-    <div class="stat-number">{{ len $posts }}</div>
+    <div class="stat-number">{{ len $all_posts }}</div>
     <div class="stat-label">مقالة</div>
   </div>
 
   <div class="stat-card">
     <div class="stat-icon">📚</div>
-    <div class="stat-number">{{ len $series }}</div>
+    <div class="stat-number">{{ len site.Taxonomies.series }}</div>
     <div class="stat-label">سلسلة</div>
   </div>
 
   <div class="stat-card">
     <div class="stat-icon">🏷️</div>
-    <div class="stat-number">{{ len $tags }}</div>
+    <div class="stat-number">{{ len site.Taxonomies.tags }}</div>
     <div class="stat-label">تصنيف</div>
   </div>
 
@@ -54,9 +52,10 @@
     <h2 class="text-lg font-semibold text-stone-900 dark:text-stone-100">أحدث المقالات</h2>
     <a href="/posts/" class="text-sm text-stone-500 hover:text-stone-900">عرض الكل ←</a>
   </div>
+  
   <div class="space-y-1">
-    {{ if gt (len $posts) 0 }}
-      {{ range first 5 $posts }}
+    {{ if gt (len $all_posts) 0 }}
+      {{ range first 5 $all_posts.ByDate.Reverse }}
       <a href="{{ .RelPermalink }}" class="group block p-3 -mx-3 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900">
         <div class="flex items-start justify-between gap-4">
           <div class="flex-1">
