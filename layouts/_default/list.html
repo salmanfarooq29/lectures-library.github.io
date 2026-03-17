@@ -5,26 +5,18 @@
     <h1 class="text-3xl font-bold text-stone-900 dark:text-stone-100 mb-4">
       {{ .Title }}
     </h1>
-    {{ if .Description }}
-      <p class="text-stone-600 dark:text-stone-400">{{ .Description }}</p>
-    {{ end }}
   </header>
 
   <div class="space-y-1">
-    {{/* Using $.Site.AllRegularPages to pull posts from EVERY language */}}
-    {{ $allPosts := where $.Site.AllRegularPages "Section" "posts" }}
+    {{/* Using site.AllPages for 2026 compatibility */}}
+    {{ $allPosts := where site.AllPages "Section" "posts" }}
     
     {{ if gt (len $allPosts) 0 }}
       {{ range $allPosts.ByDate.Reverse }}
-      <a href="{{ .RelPermalink }}" class="group block p-3 -mx-3 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900 transition-colors">
+      <a href="{{ .RelPermalink }}" class="group block p-3 -mx-3 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900">
         <div class="flex items-start justify-between gap-4">
-          <div class="flex-1 min-w-0">
-            <h3 class="font-medium text-stone-900 dark:text-stone-100 group-hover:text-sage-600 transition-colors">
-              {{ .Title }}
-            </h3>
-            <p class="text-sm text-stone-500 line-clamp-1 mt-0.5">
-              {{ .Summary | plainify | truncate 100 }}
-            </p>
+          <div class="flex-1">
+            <h3 class="font-medium text-stone-900 dark:text-stone-100">{{ .Title }}</h3>
           </div>
           <time class="text-sm text-stone-400 whitespace-nowrap">
             {{ .Date.Format "2006-01-02" }}
